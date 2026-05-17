@@ -1,8 +1,26 @@
+"use client";
+
+import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import logo from "../assets/logo.png";
 
 export default function Navbar() {
+  const router = useRouter();
+  const userData = authClient.useSession();
+  // console.log(userData?.data?.user);
+  const user = userData?.data?.user;
+
+  const handleLogout = async () => {
+    const { error } = await authClient.signOut();
+
+    if (!error) {
+      router.push("/login");
+    } else {
+      console.log("LOGOUT ERROR:", error);
+    }
+  };
   return (
     <div
       className="max-lg:collapse bg-linear-to-r from-blue-400 to-cyan-100 text-white 
@@ -44,15 +62,37 @@ export default function Navbar() {
             <li>
               <Link href="/all-campaigns">All campaigns</Link>
             </li>
-            <li>
-              <Link href="/register">Register</Link>
-            </li>
-            <li>
-              <Link href="/login">Login</Link>
-            </li>
-            {/* <li>
-              <Link href="/dashboard">Dashboard</Link>
-            </li> */}
+
+            {user ? (
+              <>
+                <Link href="/">
+                  <Image
+                    src={user?.image}
+                    alt="Profile"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                </Link>
+                <Link href="/">
+                  <button
+                    className="btn  text-emerald-500 font-bold"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link href="/register">Register</Link>
+                </li>
+                <li>
+                  <Link href="/login">Login</Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
