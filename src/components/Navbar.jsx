@@ -65,6 +65,9 @@ export default function Navbar() {
 
             {user ? (
               <>
+                <li>
+                  <Link href="/add-campaign">Add Campaign</Link>
+                </li>
                 <Link href="/">
                   <Image
                     src={user?.image}
